@@ -1,0 +1,21 @@
+﻿<Window x:Class="MiMU.FirstSettings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MiMU"
+        mc:Ignorable="d"
+        Title="첫 MiMU 런쳐 설정" Height="300" Width="300">
+    <Grid>
+        <StackPanel Margin="10">
+            <TextBlock>MiMU 사용자 설정</TextBlock>
+            <TextBlock></TextBlock>
+            <TextBlock>마인크래프트 Java 매개변수</TextBlock>
+            <TextBox Name="JavaArgs"></TextBox>
+            <TextBlock>런쳐 경로</TextBlock>
+            <Button Name="SpecifyLauncher" Click="SpecifyLauncher_Click">이 버튼을 눌러 경로를 지정하세요.</Button>
+            <TextBlock>Java 매개변수는 빈칸으로 남겨도 됨.</TextBlock>
+            <TextBlock>다 설정했으면 그냥 창 닫으세요</TextBlock>
+        </StackPanel>
+    </Grid>
+</Window>

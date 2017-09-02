@@ -25,6 +25,12 @@ namespace MiMU
             Thread thr = new Thread(startUpdate);
             thr.SetApartmentState(ApartmentState.STA);
             thr.Start();
+            downloadUtils.DownloadFileProgress += (total, downloaded) =>
+            {
+                SetSubProgress(ProgressValueTypes.Maximum, total);
+                SetSubProgress(ProgressValueTypes.Minimum, 0);
+                SetSubProgress(ProgressValueTypes.Value, downloaded);
+            };
         }
         private void startUpdate()
         {
@@ -54,7 +60,7 @@ namespace MiMU
             {
                 if (Settings.MinecraftLauncherPath != "")
                 {
-#if !NoLauncher && DEBUG
+#if !(NoLauncher && DEBUG)
                     Process.Start(Settings.MinecraftLauncherPath);
 #endif
                     Process.GetCurrentProcess().Kill();
@@ -64,7 +70,7 @@ namespace MiMU
             SetMainProgress(ProgressValueTypes.Value, 1, true);
             // check forge
             SetMainStatus("포지 설치 필요 여부을 확인하고 있습니다.");
-            SetSubStatus("포지 최신버전을 확하는 중");
+            SetSubStatus("포지 최신버전을 확인하는 중");
             List<string> forgeVersionIds = new List<string>(DetectForges(Settings.MinecraftVersion));
             if (forgeVersionIds.Count > 0)
             {
@@ -91,7 +97,7 @@ namespace MiMU
             string gameDirectory = Environment.ExpandEnvironmentVariables("%AppData%\\.minecraft-" + Settings.GameDirectorySuffix);
             string modPackTempFile = $"modpack-{DateTime.UtcNow.Ticks}.zip";
             SetSubStatus($"{latestVersion.PackageUrl} => {modPackTempFile}");
-            downloadUtils.DownloadToFile(latestVersion.PackageUrl, modPackTempFile);
+            downloadUtils.DownloadToFile(latestVersion.PackageUrl, modPackTempFile, true);
             SetSubStatus("OK");
             SetMainProgress(ProgressValueTypes.Value, 1, true);
             SetMainStatus("모드팩 압축 해제를 시작합니다.");
@@ -103,6 +109,7 @@ namespace MiMU
             using (ZipArchive archive = new ZipArchive(archiveFileStream, ZipArchiveMode.Read, false, Encoding.UTF8))
             {
                 SetSubProgress(ProgressValueTypes.Maximum, archive.Entries.Count);
+                SetSubProgress(ProgressValueTypes.Value, 0);
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
                     SetSubStatus($"압축 해제 : {entry.FullName}");
@@ -121,6 +128,8 @@ namespace MiMU
             if (!Settings.HadFirstSettings)
             {
                 FirstSettings fsWindow = new FirstSettings();
+                fsWindow.LauncherPath = Settings.MinecraftLauncherPath;
+                fsWindow.JavaArguments = Settings.MinecraftJavaArgs;
                 while (true)
                 {
                     fsWindow.ShowDialog();
@@ -147,7 +156,7 @@ namespace MiMU
             SetSubStatus("완료");
             SetMainProgress(ProgressValueTypes.Value, 1, true);
             Settings.InstalledModPackVersion = latestVersion.Identifier;
-#if !NoLauncher && DEBUG
+#if !(NoLauncher && DEBUG)
             Process.Start(Settings.MinecraftLauncherPath);
 #endif
             Process.GetCurrentProcess().Kill();
@@ -166,7 +175,7 @@ namespace MiMU
             Minimum,
             Value
         }
-        private void SetMainProgress(ProgressValueTypes valueType, int value, bool isIncrease = false)
+        private void SetMainProgress(ProgressValueTypes valueType, long value, bool isIncrease = false)
         {
             updaterWindow.Dispatcher.Invoke(() =>
             {
@@ -184,7 +193,7 @@ namespace MiMU
                 }
             });
         }
-        private void SetSubProgress(ProgressValueTypes valueType, int value, bool isIncrease = false)
+        private void SetSubProgress(ProgressValueTypes valueType, long value, bool isIncrease = false)
         {
             updaterWindow.Dispatcher.Invoke(() =>
             {
@@ -224,7 +233,7 @@ namespace MiMU
             string InstallerUrl = latestForgeBuild.Installer.Url;
             string tempFilePath = $"forge-installer-{DateTime.UtcNow.Ticks}.jar";
             SetSubStatus("포지 간편설치기 다운로드중");
-            downloadUtils.DownloadToFile(InstallerUrl, tempFilePath);
+            downloadUtils.DownloadToFile(InstallerUrl, tempFilePath, true);
             Process proc = new Process();
             proc.StartInfo.FileName = "javaw.exe";
             proc.StartInfo.Arguments = "-jar " + tempFilePath;

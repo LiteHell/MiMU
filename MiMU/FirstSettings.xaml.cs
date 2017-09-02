@@ -24,8 +24,8 @@ namespace MiMU
             InitializeComponent();
         }
         private string launcherPath;
-        public string LauncherPath { get { return launcherPath; } }
-        public string JavaArguments { get { return JavaArgs.Text; } }
+        public string LauncherPath { get { return launcherPath; } set { launcherPath = value; if (value.Trim().Length != 0) SpecifyLauncher.Content = "(런쳐 선택됨)"; } }
+        public string JavaArguments { get { return JavaArgs.Text; } set { JavaArgs.Text = value; } }
         private void SpecifyLauncher_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
@@ -36,6 +36,7 @@ namespace MiMU
             openFileDialog.Title = "마인크래프트 런쳐 선택";
             openFileDialog.ShowDialog();
             launcherPath = openFileDialog.FileName;
+            SpecifyLauncher.Content = "(런쳐 선택됨)";
         }
     }
 }

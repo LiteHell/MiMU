@@ -48,6 +48,8 @@ namespace UpdaterCore
         public IEnumerable<string> GetVersionIds()
         {
             DirectoryInfo dinfo = new DirectoryInfo(Environment.ExpandEnvironmentVariables("%AppData%\\.minecraft\\versions"));
+            if (!dinfo.Exists)
+                yield break;
             foreach (DirectoryInfo subdir in dinfo.GetDirectories())
             {
                 if (subdir.GetFiles("*.json").Length == 0) continue;

@@ -33,6 +33,7 @@ namespace MiMU
 
         private void StartUpdater()
         {
+            UpdaterCore.WebRequestable.GUIVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             noticeBrowser.Navigate(Settings.NoticeWebUrl);
             UpdateInstance update = new UpdateInstance();
             update.Start(this);

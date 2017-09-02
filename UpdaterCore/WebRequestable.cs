@@ -6,7 +6,8 @@ namespace UpdaterCore
 {
     public class WebRequestable
     {
-        protected string UserAgent { get { return $"Mozilla/5.0 (compatible; MiMU/{this.CoreVersion})"; } }
+        public static string GUIVersion { get; set; } = "0.0.0.0";
+        protected string UserAgent { get { return $"Mozilla/5.0 (compatible; MiMU/{this.CoreVersion}); GUI-Version: {WebRequestable.GUIVersion})"; } }
         protected string CoreVersion { get { return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(); } }
         protected HttpWebResponse CreateGetRequest(string url, string accept = "*/*")
         {

@@ -13,7 +13,7 @@ namespace MiMU
     {
         public void DownloadToFile(string url, string filename)
         {
-            using(HttpWebResponse wres = this.CreateGetRequest(url))
+            using (HttpWebResponse wres = this.CreateGetRequest(url))
             using (Stream str = wres.GetResponseStream())
             using (FileStream fstr = new FileStream(filename, FileMode.Create))
             {

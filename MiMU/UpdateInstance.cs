@@ -149,6 +149,7 @@ namespace MiMU
 #if !NoLauncher && DEBUG
             Process.Start(Settings.MinecraftLauncherPath);
 #endif
+            Process.GetCurrentProcess().Kill();
         }
         private void SetMainStatus(string newStatus)
         {

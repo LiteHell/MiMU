@@ -41,7 +41,7 @@ namespace MiMU
         public static string MinecraftJavaArgs { get { return readUserSetting("MinecraftJavaArgs", ""); } set { writeUserSetting("MinecraftJavaArgs", value); } }
         public static string InstalledModPackVersion { get { return readUserSetting("InstalledModPackVersion", ""); } set { writeUserSetting("InstalledModPackVersion", value); } }
         public static string MinecraftLauncherPath { get { return Environment.ExpandEnvironmentVariables(readUserSetting("MinecraftLauncherPath", "")); } set { writeUserSetting("MinecraftLauncherPath", value); } }
-        public static bool HadFirstSettings { get { return readUserSetting("MinecraftJavaArgs", "") == "yes"; } set { writeUserSetting("MinecraftJavaArgs", value ? "yes" : ""); } }
+        public static bool HadFirstSettings { get { return readUserSetting("HadFirstSettings", "") == "yes"; } set { writeUserSetting("HadFirstSettings", value ? "yes" : ""); } }
         // Server Settings
         public static string ModPackUpdateUrl { get { return readServerSetting("ModPackUpdateUrl", ""); } }
         public static string GameDirectorySuffix { get { return readServerSetting("GameDirectorySuffix", ""); } }

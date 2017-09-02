@@ -57,6 +57,7 @@ namespace MiMU
 #if !NoLauncher && DEBUG
                     Process.Start(Settings.MinecraftLauncherPath);
 #endif
+                    Process.GetCurrentProcess().Kill();
                     return;
                 }
             }
@@ -139,7 +140,7 @@ namespace MiMU
             profile.gameDir = gameDirectory;
             profile.name = Settings.LauncherProfileName;
             profile.lastVersionId = latestForgeVersionId;
-            if (Settings.MinecraftJavaArgs.Trim() != "")
+            if (Settings.MinecraftJavaArgs != "")
                 profile.javaArgs = Settings.MinecraftJavaArgs;
             launcherProfileManager.AddOrAlterProfile(Settings.LauncherProfileInternalId, profile);
             Settings.InstalledModPackVersion = latestVersion.Identifier;

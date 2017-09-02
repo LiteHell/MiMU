@@ -1,29 +1,28 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Runtime.InteropServices;
+using IniParser;
+using IniParser.Model;
 
 namespace MiMU
 {
     public static class Settings
     {
-        // from http://wow54321.tistory.com/5
-        [DllImport("kernel32")]
-        private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
-        [DllImport("kernel32")]
-        private static extern int GetPrivateProfileString(string section, string key, string def, StringBuilder retVal, int size, string filePath);
-
-        
+        private static IniData iniFile;
+        private static FileIniDataParser iniFileParser = new FileIniDataParser();
         private static string settingsPath = Path.Combine(Environment.CurrentDirectory, "mimu.ini");
+        static Settings()
+        {
+            iniFile = iniFileParser.ReadFile(settingsPath, Encoding.UTF8);
+        }
         private static void writeSetting(string section, string keyName, string keyValue)
         {
-            WritePrivateProfileString(section, keyName, keyValue, settingsPath);
+            iniFile[section][keyName] = keyValue;
+            iniFileParser.WriteFile(settingsPath, iniFile, Encoding.UTF8);
         }
         private static string readSetting(string section, string keyName, string defaultValue)
         {
-            StringBuilder strBuilder = new StringBuilder();
-            GetPrivateProfileString(section, keyName, defaultValue, strBuilder, 256, settingsPath);
-            return strBuilder.ToString();
+            return iniFile[section][keyName] ?? defaultValue;
         }
         private static void writeUserSetting(string keyName, string keyValue)
         {

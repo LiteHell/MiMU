@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Threading;
+using System.Diagnostics;
 
 namespace MiMU
 {
@@ -36,7 +37,13 @@ namespace MiMU
             UpdaterCore.WebRequestable.GUIVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             noticeBrowser.Navigate(Settings.NoticeWebUrl);
             UpdateInstance update = new UpdateInstance();
-            update.Start(this);
+            IEnumerable<string> args = Environment.GetCommandLineArgs().Skip(1);
+            bool modPackForced = args.Contains("--forced"), forgeForced = args.Contains("--forge-forced");
+#if DEBUG
+            Debug.WriteLine("forced mod pack update? : " + (modPackForced ? "yes" : "no"));
+            Debug.WriteLine("forced forge update? : " + (forgeForced ? "yes" : "no"));
+#endif
+            update.Start(this, modPackForced, forgeForced);
         }
     }
 }

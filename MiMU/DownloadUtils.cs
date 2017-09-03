@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Net;
 using UpdaterCore;
+using System.Security.Cryptography;
 
 namespace MiMU
 {
@@ -46,6 +47,17 @@ namespace MiMU
                     str.CopyTo(fstr);
                 }
             }
+        }
+        public bool checkMD5(string filename, string md5sum)
+        {
+            MD5Cng md5 = new MD5Cng();
+            string computedString = "";
+            using (FileStream fstr = new FileStream(filename, FileMode.Open)) {
+                byte[] computed = md5.ComputeHash(fstr);
+                for (int i = 0; i < computed.Length; i++)
+                    computedString += computed[i].ToString("X2");
+            }
+            return computedString.ToLower() == md5sum.ToLower();
         }
         public string DownloadAsString(string url)
         {

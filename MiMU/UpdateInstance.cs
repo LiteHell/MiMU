@@ -18,10 +18,12 @@ namespace MiMU
         private ModPackFetcher fetcher = new ModPackFetcher(Settings.ModPackUpdateUrl);
         private MainWindow updaterWindow;
         private bool forcedUpdate;
-        public void Start(MainWindow updaterWindow, bool forcedUpdate = false)
+        private bool forcedForgeUpdate;
+        public void Start(MainWindow updaterWindow, bool forcedUpdate = false, bool forcedForgeUpdate = false)
         {
             this.updaterWindow = updaterWindow;
             this.forcedUpdate = forcedUpdate;
+            this.forcedForgeUpdate = forcedForgeUpdate;
             Thread thr = new Thread(startUpdate);
             thr.SetApartmentState(ApartmentState.STA);
             thr.Start();
@@ -72,7 +74,7 @@ namespace MiMU
             SetMainStatus("포지 설치 필요 여부을 확인하고 있습니다.");
             SetSubStatus("포지 최신버전을 확인하는 중");
             List<string> forgeVersionIds = new List<string>(DetectForges(Settings.MinecraftVersion));
-            if (forgeVersionIds.Count > 0)
+            if (forgeVersionIds.Count > 0 && !forcedForgeUpdate)
             {
                 SetSubStatus("포지 있음. 설치를 건너뜁니다...");
             }
@@ -80,14 +82,19 @@ namespace MiMU
             {
                 SetMainStatus("포지를 설치하고 있습니다.");
                 SetSubStatus("설치된 포지 없음. 포지 설치를 시도합니다....");
-                bool retry = false;
+                int retry = 0;
                 while (forgeVersionIds.Count == 0)
                 {
-                    if (retry)
+                    if (retry++ > 0)
                         SetSubStatus("포지가 설치되지 않음. 다시 시도중...");
+                    if (retry > 3)
+                    {
+                        SetSubStatus("포지 설치 실패");
+                        MessageBox.Show("3번 이상 포지 설치에 실패했습니다.", "오류", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                     InstallForge();
                     forgeVersionIds = new List<string>(DetectForges(Settings.MinecraftVersion));
-                    retry = true;
+                    retry++;
                 }
             }
             SetMainProgress(ProgressValueTypes.Value, 1, true);
@@ -232,8 +239,20 @@ namespace MiMU
             //SetSubStatus($"최신 포지 버전 정보 가져옴 : {latestForgeBuild.ForgeVersion} (Build {latestForgeBuild.BuildNo})");
             string InstallerUrl = latestForgeBuild.Installer.Url;
             string tempFilePath = $"forge-installer-{DateTime.UtcNow.Ticks}.jar";
-            SetSubStatus("포지 간편설치기 다운로드중");
-            downloadUtils.DownloadToFile(InstallerUrl, tempFilePath, true);
+            while (true)
+            {
+                SetSubStatus("포지 간편설치기 다운로드중");
+                downloadUtils.DownloadToFile(InstallerUrl, tempFilePath, true);
+                SetSubStatus("무결성 검사중");
+                if (downloadUtils.checkMD5(tempFilePath, latestForgeBuild.Installer.Checksum))
+                {
+                    break;
+                } else
+                {
+                    SetSubStatus("무결성 검증 실패");
+                    File.Delete(tempFilePath);
+                }
+            }
             Process proc = new Process();
             proc.StartInfo.FileName = "javaw.exe";
             proc.StartInfo.Arguments = "-jar " + tempFilePath;

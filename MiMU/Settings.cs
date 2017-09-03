@@ -8,33 +8,42 @@ namespace MiMU
 {
     public static class Settings
     {
-        private static IniData iniFile;
+        private static IniData userIniFile;
+        private static IniData serverIniFile;
         private static FileIniDataParser iniFileParser = new FileIniDataParser();
-        private static string settingsPath = Path.Combine(Environment.CurrentDirectory, "mimu.ini");
+        private static string serverSettingsPath = Path.Combine(Environment.CurrentDirectory, "server.ini");
+        private static string userSettingsPath = Path.Combine(Environment.CurrentDirectory, "user.ini");
         static Settings()
         {
-            iniFile = iniFileParser.ReadFile(settingsPath, Encoding.UTF8);
+            if (File.Exists(serverSettingsPath))
+                serverIniFile = iniFileParser.ReadFile(serverSettingsPath, Encoding.UTF8);
+            else
+                serverIniFile = new IniData();
+            if (File.Exists(userSettingsPath))
+                userIniFile = iniFileParser.ReadFile(userSettingsPath, Encoding.UTF8);
+            else
+                userIniFile = new IniData();
         }
-        private static void writeSetting(string section, string keyName, string keyValue)
+        private static void writeUserSetting(string section, string keyName, string keyValue)
         {
-            iniFile[section][keyName] = keyValue;
-            iniFileParser.WriteFile(settingsPath, iniFile, Encoding.UTF8);
+            userIniFile[section][keyName] = keyValue;
+            iniFileParser.WriteFile(userSettingsPath, userIniFile, Encoding.UTF8);
         }
-        private static string readSetting(string section, string keyName, string defaultValue)
+        private static string readSetting(string section, string keyName, string defaultValue, bool isUser)
         {
-            return iniFile[section][keyName] ?? defaultValue;
+            return (isUser ? userIniFile[section][keyName] : serverIniFile[section][keyName]) ?? defaultValue;
         }
         private static void writeUserSetting(string keyName, string keyValue)
         {
-            writeSetting("User", keyName, keyValue);
+            writeUserSetting("User", keyName, keyValue);
         }
         private static string readUserSetting(string keyName, string defaultValue)
         {
-            return readSetting("User", keyName, defaultValue);
+            return readSetting("User", keyName, defaultValue, true);
         }
         private static string readServerSetting(string keyName, string defaultValue)
         {
-            return readSetting("Server", keyName, defaultValue);
+            return readSetting("Server", keyName, defaultValue, false);
         }
         // User Settings
         public static string MinecraftJavaArgs { get { return readUserSetting("MinecraftJavaArgs", ""); } set { writeUserSetting("MinecraftJavaArgs", value); } }

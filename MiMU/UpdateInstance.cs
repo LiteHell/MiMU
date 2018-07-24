@@ -83,7 +83,7 @@ namespace MiMU
                 SetMainStatus("포지를 설치하고 있습니다.");
                 SetSubStatus("설치된 포지 없음. 포지 설치를 시도합니다....");
                 int retry = 0;
-                while (forgeVersionIds.Count == 0)
+                do
                 {
                     if (retry++ > 0)
                         SetSubStatus("포지가 설치되지 않음. 다시 시도중...");
@@ -91,11 +91,12 @@ namespace MiMU
                     {
                         SetSubStatus("포지 설치 실패");
                         MessageBox.Show("3번 이상 포지 설치에 실패했습니다.", "오류", MessageBoxButton.OK, MessageBoxImage.Error);
+                        Process.GetCurrentProcess().Kill();
                     }
                     InstallForge();
                     forgeVersionIds = new List<string>(DetectForges(Settings.MinecraftVersion));
                     retry++;
-                }
+                } while (forgeVersionIds.Count == 0);
             }
             SetMainProgress(ProgressValueTypes.Value, 1, true);
             string latestForgeVersionId = forgeVersionIds.Last();

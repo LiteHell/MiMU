@@ -7,10 +7,10 @@ MiMU는 최신 버전의 마인크래프트를 사용하는 소규모 모드 서버를 위한 모드팩 업데이
 ## 설치
 ### 모드팩 파일 서버 설정
 모드팩 파일은 zip 패키지 파일로, 모드파일들만을 포함해야 합니다.
-이 모드파일들은 `modsYYYYMMDDNNN.zip` (NNN은 그 날짜의 몇번째 업데이트를 나타냅니다.) 형식을 따라야 하며, nginx 자동 html index를 이용하여 파일 목록을 표시해야 합니다.
+이 모드파일들은 `modsYYYYMMDDNNN.zip` (NNN은 그 날짜의 몇번째 업데이트를 나타냅니다.) 형식을 따라야 하며, nginx 자동 html index를 이용하여 파일 목록을 표시해야 하며, 또한 Content-Length 헤더이 제공되어야 합니다.
 
 ### ini파일 설정
-`mimu.example.ini` 파일을 참고하여 MiMU 실행파일에 있는 곳에 `mimu.ini`의 이름으로 존재해야 합니다. `mimu.ini` 파일 예시는 다음과 같습니다.
+`server.example.ini` 파일을 참고하여 MiMU 실행파일에 있는 곳에 `server.ini`의 이름으로 저장합니다. 다음은 `server.ini`의 예씨입니다.
 ```
 [Server]
 ; 모드팩 파일 서버
@@ -26,6 +26,11 @@ MinecraftVersion=1.10.2
 ; 공지사항 주소
 NoticeWebUrl=https://someserver.com/index.html
 ```
+
+## 매개변수
+- `--forced` 모드팩 강제 업데이트
+- `--forge-forced` 포지 강제 업데이트 (`--forced` 필요)
+
 ### LICENSE
 Copyright (C) 2017 LiteHell
 

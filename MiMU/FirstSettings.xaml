@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MiMU"
         mc:Ignorable="d"
-        Title="첫 MiMU 런쳐 설정" Height="300" Width="300" Topmost="True">
+        Title="첫 MiMU 업데이터 설정" Height="300" Width="300" Topmost="True">
     <Grid>
         <StackPanel Margin="10" Grid.ColumnSpan="2">
             <TextBlock>MiMU 첫 사용자 설정</TextBlock>
@@ -14,7 +14,7 @@
             <TextBox Name="JavaArgs" Text="-d64 -client -Xmn350m -Xms350m -Xmx1536m -XX:MaxGCPauseMillis=500 -XX:+UseParallelGC -XX:ParallelGCThreads=4 -XX:+AggressiveOpts"></TextBox>
             <TextBlock>런쳐 경로</TextBlock>
             <Button Name="SpecifyLauncher" Click="SpecifyLauncher_Click">이 버튼을 눌러 경로를 지정하세요.</Button>
-            <TextBlock TextWrapping="WrapWithOverflow">Java 매개변수는 빈칸으로 남겨도 되나 모드가 많을 시 설치할 것을 권장합니다.</TextBlock>
+            <TextBlock TextWrapping="WrapWithOverflow">Java 매개변수는 빈칸으로 남겨도 되나 모드가 많을 시 설정할 것을 권장합니다.</TextBlock>
             <TextBlock>다 설정했으면 그냥 창 닫으세요</TextBlock>
         </StackPanel>
     </Grid>
